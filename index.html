@@ -1,89 +1,117 @@
 <html>
 <head>
-	<title></title>
+	<title>Juego</title>
 		<meta http-equiv ="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv ="X-UA-Compatible" content="IE-8" />
 	<script src="js.js"></script>
 	<script src="TweenMax.js"></script>
 <style type="text/css">
 body{
-	background-color: #00D9C4;
+	background-color:#fff;
+}
+.personaje{
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	background-color: #f00;
 }
 .square{
-	width: 50px;
-	height: 50px;
+	width: 20px;
+	height: 20px;
 	background-color: #fff;
 	position: absolute;
-	left: 900px;
+	right: 0;
 }
-.arriba{top:0;}
-.abajo{bottom: 0;}
 #main{
 	position: absolute;
-	width: 800px;
-	height: 450px;
+	width: 100%;
+	height: 100%;
 	border: solid 1px #333;
+	overflow: hidden;
 
+}
+.perdio{
+	width: 100%;
+	height: 100%;
+	padding-top: 200px;
+	background-color: #333;
+	position: absolute;
+	z-index: 999;
+	color: #fff;
+	font: 30px arial;
+	text-align: center;
+	vertical-align:middle;
+	display:none;
+	overflow: hidden;
 }
 </style>
 <script type="text/javascript">
 
 $(window).load(function(){
-	//salida();
+
+	TweenLite.to(['.personaje','.square'],.5,{borderRadius:"50%"});
 	centrar();
+
+	
 });
 $(window).resize(function () {
 	centrar();
 });
 $(document).ready(function() {
 
+  $("#main").mousemove(function(e){
+     TweenLite.to('.personaje',.1,{x:e.pageX,y:e.pageY});
 
-var total = 350;
-/*for(var i = 0; i < total; i++) {
+     $('.square').hover(function(){
 
-	$("#main").append('<div class="circle cell'+i+'"></div>');
-};*/
-// Stuff to do as soon as the DOM is ready;
-window.setInterval(salida, 500);
-window.setInterval(salida2, 800);
+     	limpiar();
+		$('.perdio').css({display:"block"});
+		TweenLite.to('.perdio',.5,{delay:1,alphaAuto:0,display:"none"});
+	});
+
+  });
+  	salida();
+	window.setInterval(salida, 2500);
 
 });
+
+
+var elementos=[];
+var inicio=0;
 function salida(){
 
-	//alert('hola');
-	var total = 2;
-		var code= aleatorio(50,300);
+		var colores =["#2CE7B1","#00B5AD","#005C64","#00D9C4","#00A5A0","#00C3F6","#000630","#2D4F70","#2D1E43","#00F1FF","#79475E","#53FDBA","#AC536F","#4B2254","#77787A"];
+		
+		for (var a = 0; a < 50; a++) {
 
-		$("#main").append('<div class="square arriba cell'+code+'"></div>');
-
-		var figura = aleatorio(150,300);
-		var alto= aleatorio(50,400);
-		var ancho= aleatorio(150,500);
-		var retro = 6/6;
+		var figura = aleatorio(0,14);
+		inicio++;
+		var code= inicio;
+		$("#main").append('<div class="square cell'+code+'"></div>');
+		var alto= aleatorio(0,$(window).innerHeight());
+		var retro = a/6;
 		var namex=".cell"+code;
+		elementos[code]=namex;
 
-		TweenLite.to(namex, .5,{delay:retro, width:ancho, height:alto,onComplete:function(){ TweenLite.to(namex,3,{left:-500});}});
+		TweenLite.to(namex,1,{delay:retro,top:alto,backgroundColor:colores[figura], right:0,onComplete:paso, onCompleteParams:[namex],borderRadius:"50%"});
 
+		};
 
 }
-function salida2(){
-
-	//alert('hola');
-	var total = 2;
-		var code= aleatorio(50,300);
-
-		$("#main").append('<div class="square abajo cell'+code+'"></div>');
-
-		var figura = aleatorio(150,300);
-		var alto= aleatorio(50,200);
-		var ancho= aleatorio(150,500);
-		var retro = 6/6;
-		var namex=".cell"+code;
-
-		TweenLite.to(namex, .5,{delay:retro, width:ancho, height:alto,onComplete:function(){ TweenLite.to(namex,3,{left:-500});}});
-
-
+function limpiar(){
+	for (var i = 0; i < elementos.length; i++) {
+		var dat=".cell"+i;
+		$(dat).remove();
+	};
 }
+function paso(bin){
+			var bola=aleatorio(20,100);
+			TweenLite.to(bin,6,{right:$('#main').width()+200, width:bola, height:bola, onComplete:termina,onCompleteParams:[bin]});
+	}
+function termina(dat){
+	$(dat).remove();
+}
+
 function aleatorio(a,b) {
          return Math.round(Math.random()*(b-a)+parseInt(a));
 }
@@ -98,6 +126,8 @@ function centrar(){
 </head>
 <body>
 	<div id="main">
+		<div class="personaje"></div>
+		<div class="perdio"> Perdiste </div>
 	</div>
 </body>
 </html>
